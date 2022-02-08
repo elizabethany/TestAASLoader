@@ -38,14 +38,30 @@ int main() {
 	std::cout << "\nnumTraversals " << temp.numTraversals;
 	std::cout << "\nfirstHintNode " << temp.firstHintNode;
 	std::cout << "\nnumHintNodes " << temp.numHintNodes;
+	const auto& temp = myFile.cover[64];
+	std::cout << "\nradius " << temp.radius;
+	std::cout << "\nidleAnimIndex " << temp.idleAnimIndex;
+	std::cout << "\nareaNum " << temp.areaNum;
+	std::cout << "\nflags " << temp.flags;
+	std::cout << "\npadding " << temp.padding;
+	std::cout << "\nnumTouching " << temp.numTouching;
+	std::cout << "\nfirstTouching " << temp.firstTouching;
+	std::cout << "\naiTypes " << temp.aiTypes;
+	std::cout << "\nreservedBy " << temp.reservedBy;
+	std::cout << "\nusableTime " << temp.usableTime;
 	*/
+	const auto& temp = myFile.traversalPoints[6];
+	std::cout << "\nreachabilityIndex " << temp.reachabilityIndex;
+	std::cout << "\nstartAreaNum " << temp.startAreaNum;
+	std::cout << "\nendAreaNum " << temp.endAreaNum;
+	std::cout << "\npadding " << temp.padding;
 
 	std::cout << "\nOutput file path: ";
 	//const char* outputPath = getFilePath(); // test.txt
 	const char* outputPath = "test.txt";
 	write_aas(&myFile, outputPath);
 
-	//std::cin.get();
+	std::cin.get();
 
 	return 0;
 }

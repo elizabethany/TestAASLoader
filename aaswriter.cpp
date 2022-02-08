@@ -18,7 +18,9 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 	output << AAS_FILEID << " " << AAS_FILEVERSION;
 
 	// crc
-	output << "\n\n" << aasFile->crc;
+	//output << "\n\n" << aasFile->crc;
+	
+	output << "\n\n" << 0;
 
 	// firstFake stuffs
 	output << "\n\nfirstFakeVertex " << aasFile->firstFakeVertex;
@@ -144,25 +146,6 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 	// Write areas (17 items in struct, 13 items in both txt .aas, not sure what order to write them in)
 	output << "\nareas " << aasFile->areas.size() << " {";
 	int areaIndex = 0;
-	/*
-	flags 14
-	travelFlags 8
-	numEdges 12
-	firstEdge 9
-	cluster 1
-	clusterAreaNum 2
-	obstaclePVSOffset 12
-	firstCover 24
-	numCover 0
-	X reach 13017
-	X rev_reach 13023
-	firstChokePoint 0
-	numChokePoints 0
-	firstTraversal 0
-	numTraversals 0
-	firstHintNode 0
-	numHintNodes 0
-	*/
 	for (const auto& currentArea : aasFile->areas)
 	{
 		// Reference code from D3BFG aas writer
@@ -223,6 +206,102 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 		// No obstaclePVS in D3BFG writer; is casting to int even the correct way?
 		output << "\n	" << obstaclePVSIndex << " ( " << static_cast<int>(currentObstaclePVS) << " )";
 		obstaclePVSIndex++;
+	}
+	output << "\n}";
+
+	// Write reachNames
+	output << "\nreachNames " << aasFile->reachabilityNames.size() << " {";
+	int reachabilityNameIndex = 0;
+	for (const auto& currentReachabilityName : aasFile->reachabilityNames)
+	{
+		// No reachabilityNames in D3BFG writer
+		output << "\n	" << reachabilityNameIndex << " ( " << currentReachabilityName.name << " " << currentReachabilityName.index << " )";
+		reachabilityNameIndex++;
+	}
+	output << "\n}";
+
+	// Write animNames
+	output << "\nanimNames " << aasFile->animNames.size() << " {";
+	for (const auto& currentAnimName : aasFile->animNames)
+	{
+		// No reachabilityNames in D3BFG writer
+		output << "\n\"" << currentAnimName.name << "\"";
+	}
+	output << "\n}";
+
+	// Write dependencyNames
+	output << "\ndependencyNames " << aasFile->dependencyNames.size() << " {";
+	for (const auto& currentDependencyName : aasFile->dependencyNames)
+	{
+		// No dependencyNames in D3BFG writer
+		output << "\n\"" << currentDependencyName.name << "\"";
+	}
+	output << "\n}";
+
+	// Write interactionEntityNames
+	output << "\ninteractionEntityNames " << aasFile->interactionEntityNames.size() << " {";
+	for (const auto& currentInteractionEntityNames : aasFile->interactionEntityNames)
+	{
+		// No interactionEntityNames in D3BFG writer
+		output << "\n\"" << currentInteractionEntityNames.name << "\"";
+	}
+	output << "\n}";
+
+	// Write cover
+	output << "\ncover " << aasFile->cover.size() << " {";
+	int coverIndex = 0;
+	for (const auto& currentCover : aasFile->cover)
+	{
+		// No cover in D3BFG writer
+		output << "\n	" << coverIndex << " ( " << currentCover.origin.x << " " << currentCover.origin.y << " " << currentCover.origin.z << " " << currentCover.dir.x << " " << currentCover.dir.y << " " << currentCover.dir.z << " " << currentCover.radius << " " << currentCover.idleAnimIndex << " " << currentCover.padding << " " << currentCover.flags << " " << currentCover.firstTouching << " " << currentCover.numTouching << " " << currentCover.aiTypes << " )";
+		coverIndex++;
+	}
+	output << "\n}";
+
+	// Write areaCoverIndex
+	output << "\nareaCoverIndex " << aasFile->areaCoverIndex.size() << " {";
+	int areaCoverIndexIndex = 0;
+	for (const auto& currentAreaCoverIndex : aasFile->areaCoverIndex)
+	{
+		// No areaCoverIndex in D3BFG writer
+		output << "\n	" << areaCoverIndexIndex << " ( " << currentAreaCoverIndex << " )";
+		areaCoverIndexIndex++;
+	}
+	output << "\n}";
+
+	// Write touchingCoverIndex
+	output << "\ntouchingCoverIndex " << aasFile->touchingCoverIndex.size() << " {";
+	int touchingCoverIndexIndex = 0;
+	for (const auto& currentTouchingCoverIndex : aasFile->touchingCoverIndex)
+	{
+		// No touchingCoverIndex in D3BFG writer
+		output << "\n	" << touchingCoverIndexIndex << " ( " << currentTouchingCoverIndex << " )";
+		touchingCoverIndexIndex++;
+	}
+	output << "\n}";
+
+	// Write traversalPoints
+	output << "\ntraversalPoints " << aasFile->traversalPoints.size() << " {";
+	int traversalPointIndex = 0;
+	for (const auto& currentTraversalPoint : aasFile->traversalPoints)
+	{
+		// No traversalPoints in D3BFG writer
+
+		// Open brace
+		output << "\n	" << traversalPointIndex << " ( ";
+
+		// startPoint, endPoint, orientationFwd, and extrusionFwd
+		output << currentTraversalPoint.startPoint.x << " " << currentTraversalPoint.startPoint.y << " " << currentTraversalPoint.startPoint.z << " " << currentTraversalPoint.endPoint.x << " " << currentTraversalPoint.endPoint.y << " " << currentTraversalPoint.endPoint.z << " " << currentTraversalPoint.orientationFwd.x << " " << currentTraversalPoint.orientationFwd.y << " " << currentTraversalPoint.orientationFwd.z << " " << currentTraversalPoint.extrusionFwd.x << " " << currentTraversalPoint.extrusionFwd.y << " " << currentTraversalPoint.extrusionFwd.z << " ";
+
+		output << currentTraversalPoint.padding << " ";
+
+		// travelTimeScale, animIndex, flags, dependencyIndex, and interactionEntIndex
+		output << currentTraversalPoint.travelTimeScale << " " << currentTraversalPoint.animIndex << " " << currentTraversalPoint.flags << " " << currentTraversalPoint.dependencyIndex << " " << currentTraversalPoint.interactionEntIndex;
+
+		// Closing brace
+		output << " )";
+
+		traversalPointIndex++;
 	}
 	output << "\n}";
 
