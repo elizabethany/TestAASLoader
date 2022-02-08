@@ -485,4 +485,4 @@ struct idAAS2File {
 bool load_aas(idAAS2File* out_aas, const char* filepath);
 void idAAS2File_EndianSwap(idAAS2File *result);
 
-void write_aas(idAAS2File* outdata, const char* tofile);
+bool write_aas(idAAS2File* aasFile, const char* tofile);

@@ -2,6 +2,7 @@
 	Loader for aas2
 */
 #include <vector>
+#include <iostream>
 #include "aas.hpp"
 
 #include "raw_loader.hpp"
@@ -17,8 +18,11 @@ bool load_aas(idAAS2File* out_aas, const char* filepath) {
 	
 	FILE* f = nullptr;
 	fopen_s(&f, filepath, "rb");
-	if(!f) {
-		return false;
+	if (!f)
+    {
+        std::cout << "Invalid .baas file path\nPress Enter to continue . . .";
+        std::cin;
+        return false;
 	}
 
 	fseek(f, 0, SEEK_END);
