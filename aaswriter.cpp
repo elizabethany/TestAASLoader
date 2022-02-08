@@ -287,21 +287,59 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 	{
 		// No traversalPoints in D3BFG writer
 
-		// Open brace
+		// Opening brace
 		output << "\n	" << traversalPointIndex << " ( ";
 
 		// startPoint, endPoint, orientationFwd, and extrusionFwd
 		output << currentTraversalPoint.startPoint.x << " " << currentTraversalPoint.startPoint.y << " " << currentTraversalPoint.startPoint.z << " " << currentTraversalPoint.endPoint.x << " " << currentTraversalPoint.endPoint.y << " " << currentTraversalPoint.endPoint.z << " " << currentTraversalPoint.orientationFwd.x << " " << currentTraversalPoint.orientationFwd.y << " " << currentTraversalPoint.orientationFwd.z << " " << currentTraversalPoint.extrusionFwd.x << " " << currentTraversalPoint.extrusionFwd.y << " " << currentTraversalPoint.extrusionFwd.z << " ";
 
-		output << currentTraversalPoint.padding << " ";
+		// startAreaNum and endAreaNum
+		output << currentTraversalPoint.startAreaNum << " " << currentTraversalPoint.endAreaNum << " ";
 
-		// travelTimeScale, animIndex, flags, dependencyIndex, and interactionEntIndex
-		output << currentTraversalPoint.travelTimeScale << " " << currentTraversalPoint.animIndex << " " << currentTraversalPoint.flags << " " << currentTraversalPoint.dependencyIndex << " " << currentTraversalPoint.interactionEntIndex;
+		// travelTimeScale, animIndex, reachabilityIndex, flags, dependencyIndex, and interactionEntIndex
+		output << currentTraversalPoint.travelTimeScale << " " << currentTraversalPoint.animIndex << " " << currentTraversalPoint.reachabilityIndex << " " << currentTraversalPoint.flags << " " << currentTraversalPoint.dependencyIndex << " " << currentTraversalPoint.interactionEntIndex;
 
 		// Closing brace
 		output << " )";
 
 		traversalPointIndex++;
+	}
+	output << "\n}";
+
+	// Write hintNodes
+	output << "\nhintNodes " << aasFile->hintNodes.size() << " {";
+	int hintNodeIndex = 0;
+	for (const auto& currentHintNode : aasFile->hintNodes)
+	{
+		// No hintNodes in D3BFG writer
+
+		// Opening brace
+		output << "\n	" << hintNodeIndex << " ( ";
+
+		// origin
+		output << currentHintNode.origin.x << " " << currentHintNode.origin.y << " " << currentHintNode.origin.z << " ";
+
+		// everything else
+		output << currentHintNode.areaNum << " " << currentHintNode.radius << " " << static_cast<int>(currentHintNode.hintType) << " " << static_cast<int>(currentHintNode.orientation) << " " << static_cast<int>(currentHintNode.dirFlags) << " " << static_cast<int>(currentHintNode.grouping) << " " << currentHintNode.hintData;
+
+		// Closing brace
+		output << " )";
+
+		hintNodeIndex++;
+	}
+	output << "\n}";
+
+	// Write trees
+	output << "\ntrees " << aasFile->trees.size() << " {";
+	int treeIndex = 0;
+	for (const auto& currentTree : aasFile->trees)
+	{
+		// No trees in D3BFG writer
+
+		// floorNormal
+		output << "\n	" << treeIndex << " ( " << currentTree.floorNormal.x << " " << currentTree.floorNormal.y << " " << currentTree.floorNormal.z << " ) ";
+		output << currentTree.headNode << " " << currentTree.firstArea << " " << currentTree.lastArea;
+		treeIndex++;
 	}
 	output << "\n}";
 

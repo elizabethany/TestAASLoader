@@ -15,7 +15,7 @@ int main() {
 	idAAS2File myFile;
 
 	std::cout << ".BAAS file path: ";
-	//const char* aasFilePath = getFilePath(); // intro.baas_monster48;aas
+	//const char* aasFilePath = getFilePath();
 	const char* aasFilePath = "bfg_division.baas_monster128;aas";
 	load_aas(&myFile, aasFilePath);
 
@@ -49,19 +49,19 @@ int main() {
 	std::cout << "\naiTypes " << temp.aiTypes;
 	std::cout << "\nreservedBy " << temp.reservedBy;
 	std::cout << "\nusableTime " << temp.usableTime;
-	*/
 	const auto& temp = myFile.traversalPoints[6];
 	std::cout << "\nreachabilityIndex " << temp.reachabilityIndex;
 	std::cout << "\nstartAreaNum " << temp.startAreaNum;
 	std::cout << "\nendAreaNum " << temp.endAreaNum;
 	std::cout << "\npadding " << temp.padding;
+	*/
 
 	std::cout << "\nOutput file path: ";
-	//const char* outputPath = getFilePath(); // test.txt
+	//const char* outputPath = getFilePath();
 	const char* outputPath = "test.txt";
 	write_aas(&myFile, outputPath);
 
-	std::cin.get();
+	//std::cin.get();
 
 	return 0;
 }
