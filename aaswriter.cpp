@@ -141,6 +141,91 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 	}
 	output << "\n}";
 
+	// Write areas (17 items in struct, 13 items in both txt .aas, not sure what order to write them in)
+	output << "\nareas " << aasFile->areas.size() << " {";
+	int areaIndex = 0;
+	/*
+	flags 14
+	travelFlags 8
+	numEdges 12
+	firstEdge 9
+	cluster 1
+	clusterAreaNum 2
+	obstaclePVSOffset 12
+	firstCover 24
+	numCover 0
+	X reach 13017
+	X rev_reach 13023
+	firstChokePoint 0
+	numChokePoints 0
+	firstTraversal 0
+	numTraversals 0
+	firstHintNode 0
+	numHintNodes 0
+	*/
+	for (const auto& currentArea : aasFile->areas)
+	{
+		// Reference code from D3BFG aas writer
+		// areas[i].flags, areas[i].contents, areas[i].firstFace, areas[i].numFaces, areas[i].cluster, areas[i].clusterAreaNum, num )
+		output << "\n	" << areaIndex << " ( " << currentArea.flags << " " << currentArea.travelFlags << " " << currentArea.numEdges << " " << currentArea.firstEdge << " " << currentArea.cluster << " " << currentArea.clusterAreaNum << " " << currentArea.obstaclePVSOffset << " " << currentArea.firstCover << " " << currentArea.firstChokePoint << " " << currentArea.numChokePoints << " " << currentArea.firstTraversal << " " << currentArea.numTraversals << " " << 0 << " )";
+		areaIndex++;
+	}
+	output << "\n}";
+
+	// Write nodes
+	output << "\nnodes " << aasFile->nodes.size() << " {";
+	int nodeIndex = 0;
+	for (const auto& currentNode : aasFile->nodes)
+	{
+		output << "\n	" << nodeIndex << " ( " << currentNode.planeNum << " " << currentNode.flags << " " << currentNode.children[0] << " " << currentNode.children[1] << " )";
+		nodeIndex++;
+	}
+	output << "\n}";
+
+	// Write portals (6 items struct, 5 items in both txt .aas
+	// maxAreaTravelTime was dropped, but reference shows all zero values, so maybe it won't matter
+	// maxAreaTravelTime does not apepar in D3BFG writer
+	output << "\nportals " << aasFile->portals.size() << " {";
+	int portalIndex = 0;
+	for (const auto& currentPortal : aasFile->portals)
+	{
+		output << "\n	" << portalIndex << " ( " << currentPortal.areaNum << " " << currentPortal.clusters[0] << " " << currentPortal.clusters[1] << " " << currentPortal.clusterAreaNum[0] << " " << currentPortal.clusterAreaNum[1] << " )";
+		portalIndex++;
+	}
+	output << "\n}";
+
+	// Write portalIndex (no portalIndex exists in txt .aas as reference)
+	output << "\nportalIndex " << aasFile->portalIndex.size() << " {";
+	int portalIndexIndex = 0;
+	for (const auto& currentPortalIndex : aasFile->portalIndex)
+	{
+		output << "\n	" << portalIndexIndex << " ( " << currentPortalIndex << " )";
+		portalIndexIndex++;
+	}
+	output << "\n}";
+
+	// Write clusters
+	output << "\nclusters " << aasFile->clusters.size() << " {";
+	int clusterIndex = 0;
+	for (const auto& currentCluster : aasFile->clusters)
+	{
+		// D3BFG writer writes firstPortal before numPortals
+		output << "\n	" << clusterIndex << " ( " << currentCluster.numAreas << " " << currentCluster.numReachableAreas << " " << currentCluster.firstPortal << " " << currentCluster.numPortals << " )";
+		clusterIndex++;
+	}
+	output << "\n}";
+
+	// Write obstaclePVS
+	output << "\nobstaclePVS " << aasFile->obstaclePVS.size() << " {";
+	int obstaclePVSIndex = 0;
+	for (const auto& currentObstaclePVS : aasFile->obstaclePVS)
+	{
+		// No obstaclePVS in D3BFG writer; is casting to int even the correct way?
+		output << "\n	" << obstaclePVSIndex << " ( " << static_cast<int>(currentObstaclePVS) << " )";
+		obstaclePVSIndex++;
+	}
+	output << "\n}";
+
 	output.close();
 
 	return true;
