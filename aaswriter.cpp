@@ -179,7 +179,7 @@ bool write_aas(
 	output << "\n}";
 	std::cout << "\nFinished writing nodes";
 
-	// Write portals (6 items struct, 5 items in both txt .aas
+	// Write portals (6 items in struct, 5 items in both txt .aas)
 	// maxAreaTravelTime was dropped, but reference shows all zero values, so maybe it won't matter
 	// maxAreaTravelTime does not apepar in D3BFG writer
 	output << "\nportals " << aasFile->portals.size() << " {";
