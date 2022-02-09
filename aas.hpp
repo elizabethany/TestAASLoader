@@ -1,5 +1,6 @@
 #pragma once
 #include "idlib.hpp"
+#include <sstream>
 
 struct idAAS2Settings {
 	using type_t = unsigned;
