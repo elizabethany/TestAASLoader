@@ -7,12 +7,18 @@
 #define AAS_FILEID "ZIONAAS"
 #define AAS_FILEVERSION "3.20"
 
+static const std::vector<std::string> enum_type_t = {"", "monster", "bot"};
+
 // https://github.com/id-Software/DOOM-3-BFG/blob/master/neo/aas/AASFile.cpp idAASFileLocal::Write
 
-bool write_aas(idAAS2File* aasFile, const char* tofile) {
+bool write_aas(
+	idAAS2File* aasFile,
+	std::string outputFile
+)
+{
 	
 	// Open or create the output file at given path
-	std::fstream output(tofile, std::fstream::out | std::fstream::trunc);
+	std::fstream output(outputFile, std::fstream::out | std::fstream::trunc);
 
 	// aas field and version
 	output << AAS_FILEID << " " << AAS_FILEVERSION;
@@ -30,7 +36,7 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 
 	// Write settings
 	output << "\n\nsettings {";
-	output << "\n	type = " << aasFile->settings.type;
+	output << "\n	type = " << enum_type_t[aasFile->settings.type];
 	output << "\n	fileExtensionAAS = \"" << aasFile->settings.fileExtensionAAS.ptr << "\"";
 	output << "\n	groupName = \"" << aasFile->settings.groupName.ptr << "\"";
 	output << "\n	explicitGroupName = \"" << aasFile->settings.explicitGroupName.ptr << "\"";
@@ -78,6 +84,7 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 	output << "\n	tt_ledgeGrab = " << aasFile->settings.tt_ledgeGrab;
 	output << "\n	tt_startLadderClimb = " << aasFile->settings.tt_startLadderClimb;
 	output << "\n}";
+	std::cout << "\nFinished writing settings";
 
 	// Write planes
 	output << "\nplanes " << aasFile->planes.size() << " {";
@@ -88,6 +95,7 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 		planeIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing planes";
 
 	// Write vertices
 	output << "\nvertices " << aasFile->vertices.size() << " {";
@@ -98,6 +106,7 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 		vertexIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing vertices";
 
 	// Write edges
 	output << "\nedges " << aasFile->edges.size() << " {";
@@ -108,6 +117,7 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 		edgeIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing edges";
 
 	// Write edgeIndex
 	output << "\nedgeIndex " << aasFile->edgeIndex.size() << " {";
@@ -118,6 +128,7 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 		edgeIndexIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing edgeIndex";
 
 	// Write reachabilities
 	output << "\nreachabilities " << aasFile->reachabilities.size() << " {";
@@ -142,6 +153,7 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 		reachabilityIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing reachabilities";
 
 	// Write areas (17 items in struct, 13 items in both txt .aas, not sure what order to write them in)
 	output << "\nareas " << aasFile->areas.size() << " {";
@@ -154,6 +166,7 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 		areaIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing areas";
 
 	// Write nodes
 	output << "\nnodes " << aasFile->nodes.size() << " {";
@@ -164,6 +177,7 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 		nodeIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing nodes";
 
 	// Write portals (6 items struct, 5 items in both txt .aas
 	// maxAreaTravelTime was dropped, but reference shows all zero values, so maybe it won't matter
@@ -176,6 +190,7 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 		portalIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing portals";
 
 	// Write portalIndex (no portalIndex exists in txt .aas as reference)
 	output << "\nportalIndex " << aasFile->portalIndex.size() << " {";
@@ -186,6 +201,7 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 		portalIndexIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing portalIndex";
 
 	// Write clusters
 	output << "\nclusters " << aasFile->clusters.size() << " {";
@@ -197,62 +213,63 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 		clusterIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing clusters";
 
 	// Write obstaclePVS
 	output << "\nobstaclePVS " << aasFile->obstaclePVS.size() << " {";
 	int obstaclePVSIndex = 0;
 	for (const auto& currentObstaclePVS : aasFile->obstaclePVS)
 	{
-		// No obstaclePVS in D3BFG writer; is casting to int even the correct way?
+		// Is casting to int even the correct way?
 		output << "\n	" << obstaclePVSIndex << " ( " << static_cast<int>(currentObstaclePVS) << " )";
 		obstaclePVSIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing obstaclePVS";
 
 	// Write reachNames
 	output << "\nreachNames " << aasFile->reachabilityNames.size() << " {";
 	int reachabilityNameIndex = 0;
 	for (const auto& currentReachabilityName : aasFile->reachabilityNames)
 	{
-		// No reachabilityNames in D3BFG writer
 		output << "\n	" << reachabilityNameIndex << " ( " << currentReachabilityName.name << " " << currentReachabilityName.index << " )";
 		reachabilityNameIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing reachNames";
 
 	// Write animNames
 	output << "\nanimNames " << aasFile->animNames.size() << " {";
 	for (const auto& currentAnimName : aasFile->animNames)
 	{
-		// No reachabilityNames in D3BFG writer
 		output << "\n\"" << currentAnimName.name << "\"";
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing animNames";
 
 	// Write dependencyNames
 	output << "\ndependencyNames " << aasFile->dependencyNames.size() << " {";
 	for (const auto& currentDependencyName : aasFile->dependencyNames)
 	{
-		// No dependencyNames in D3BFG writer
 		output << "\n\"" << currentDependencyName.name << "\"";
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing dependencyNames";
 
 	// Write interactionEntityNames
 	output << "\ninteractionEntityNames " << aasFile->interactionEntityNames.size() << " {";
 	for (const auto& currentInteractionEntityNames : aasFile->interactionEntityNames)
 	{
-		// No interactionEntityNames in D3BFG writer
 		output << "\n\"" << currentInteractionEntityNames.name << "\"";
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing interactionEntityNames";
 
 	// Write cover
 	output << "\ncover " << aasFile->cover.size() << " {";
 	int coverIndex = 0;
 	for (const auto& currentCover : aasFile->cover)
 	{
-		// No cover in D3BFG writer
 		output << "\n	" << coverIndex << " ( " << currentCover.origin.x << " " << currentCover.origin.y << " " << currentCover.origin.z << " " << currentCover.dir.x << " " << currentCover.dir.y << " " << currentCover.dir.z << " " << currentCover.radius << " " << currentCover.idleAnimIndex << " " << currentCover.padding << " " << currentCover.flags << " " << currentCover.firstTouching << " " << currentCover.numTouching << " " << currentCover.aiTypes << " )";
 		coverIndex++;
 	}
@@ -263,30 +280,28 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 	int areaCoverIndexIndex = 0;
 	for (const auto& currentAreaCoverIndex : aasFile->areaCoverIndex)
 	{
-		// No areaCoverIndex in D3BFG writer
 		output << "\n	" << areaCoverIndexIndex << " ( " << currentAreaCoverIndex << " )";
 		areaCoverIndexIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing areaCoverIndex";
 
 	// Write touchingCoverIndex
 	output << "\ntouchingCoverIndex " << aasFile->touchingCoverIndex.size() << " {";
 	int touchingCoverIndexIndex = 0;
 	for (const auto& currentTouchingCoverIndex : aasFile->touchingCoverIndex)
 	{
-		// No touchingCoverIndex in D3BFG writer
 		output << "\n	" << touchingCoverIndexIndex << " ( " << currentTouchingCoverIndex << " )";
 		touchingCoverIndexIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing touchingCoverIndex";
 
 	// Write traversalPoints
 	output << "\ntraversalPoints " << aasFile->traversalPoints.size() << " {";
 	int traversalPointIndex = 0;
 	for (const auto& currentTraversalPoint : aasFile->traversalPoints)
 	{
-		// No traversalPoints in D3BFG writer
-
 		// Opening brace
 		output << "\n	" << traversalPointIndex << " ( ";
 
@@ -305,14 +320,13 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 		traversalPointIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing traversalPoints";
 
 	// Write hintNodes
 	output << "\nhintNodes " << aasFile->hintNodes.size() << " {";
 	int hintNodeIndex = 0;
 	for (const auto& currentHintNode : aasFile->hintNodes)
 	{
-		// No hintNodes in D3BFG writer
-
 		// Opening brace
 		output << "\n	" << hintNodeIndex << " ( ";
 
@@ -328,22 +342,25 @@ bool write_aas(idAAS2File* aasFile, const char* tofile) {
 		hintNodeIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing hintNodes";
 
 	// Write trees
 	output << "\ntrees " << aasFile->trees.size() << " {";
 	int treeIndex = 0;
 	for (const auto& currentTree : aasFile->trees)
 	{
-		// No trees in D3BFG writer
-
 		// floorNormal
 		output << "\n	" << treeIndex << " ( " << currentTree.floorNormal.x << " " << currentTree.floorNormal.y << " " << currentTree.floorNormal.z << " ) ";
+		
+		// headNode, firstArea, and lastArea
 		output << currentTree.headNode << " " << currentTree.firstArea << " " << currentTree.lastArea;
 		treeIndex++;
 	}
 	output << "\n}";
+	std::cout << "\nFinished writing trees";
 
 	output.close();
+	std::cout << "\nAAS writing complete";
 
 	return true;
 }

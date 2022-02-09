@@ -10,58 +10,54 @@ char* getFilePath()
 	return filePath;
 }
 
-int main() {
+// Make string copy of file path, change extension from .baas to .aas (the format for plain text AAS files), and add it to the output folder path
+std::string getOutputPath(
+	const char* aasFilePath
+)
+{
+	std::string fileName(aasFilePath);
+	const std::string extension = ".baas";
+	size_t startPoint = fileName.find(extension);
+	size_t endPoint = extension.length();
+	fileName.replace(startPoint, endPoint, ".aas");
 
+	auto filePath = "Plain Text AAS/" + fileName;
+
+	return filePath;
+}
+
+int main(
+	int argc,
+	char** argv
+)
+{
+	// New aas struct
 	idAAS2File myFile;
+	char* tempFile;
 
-	std::cout << ".BAAS file path: ";
-	//const char* aasFilePath = getFilePath();
-	const char* aasFilePath = "bfg_division.baas_monster128;aas";
-	load_aas(&myFile, aasFilePath);
+	if (argv[1] != NULL) // Get .baas file path from drag & drop and load AAS into struct
+	{
+		tempFile = argv[1];
+	}
+	else // Get .baas file path from console input and load AAS into struct
+	{
+		std::cout << ".BAAS file path: ";
+		tempFile = getFilePath();
+	}
 
-	/*
-	const auto& temp = myFile.areas[3];
-	std::cout << "\ntravelFlags " << temp.travelFlags;
-	std::cout << "\nflags " << temp.flags;
-	std::cout << "\nnumEdges " << temp.numEdges;
-	std::cout << "\nfirstEdge " << temp.firstEdge;
-	std::cout << "\ncluster " << temp.cluster;
-	std::cout << "\nclusterAreaNum " << temp.clusterAreaNum;
-	std::cout << "\nobstaclePVSOffset " << temp.obstaclePVSOffset;
-	std::cout << "\nreach " << temp.reach;
-	std::cout << "\nrev_reach " << temp.rev_reach;
-	std::cout << "\nfirstChokePoint " << temp.firstChokePoint;
-	std::cout << "\nnumChokePoints " << temp.numChokePoints;
-	std::cout << "\nfirstCover " << temp.firstCover;
-	std::cout << "\nnumCover " << temp.numCover;
-	std::cout << "\nfirstTraversal " << temp.firstTraversal;
-	std::cout << "\nnumTraversals " << temp.numTraversals;
-	std::cout << "\nfirstHintNode " << temp.firstHintNode;
-	std::cout << "\nnumHintNodes " << temp.numHintNodes;
-	const auto& temp = myFile.cover[64];
-	std::cout << "\nradius " << temp.radius;
-	std::cout << "\nidleAnimIndex " << temp.idleAnimIndex;
-	std::cout << "\nareaNum " << temp.areaNum;
-	std::cout << "\nflags " << temp.flags;
-	std::cout << "\npadding " << temp.padding;
-	std::cout << "\nnumTouching " << temp.numTouching;
-	std::cout << "\nfirstTouching " << temp.firstTouching;
-	std::cout << "\naiTypes " << temp.aiTypes;
-	std::cout << "\nreservedBy " << temp.reservedBy;
-	std::cout << "\nusableTime " << temp.usableTime;
-	const auto& temp = myFile.traversalPoints[6];
-	std::cout << "\nreachabilityIndex " << temp.reachabilityIndex;
-	std::cout << "\nstartAreaNum " << temp.startAreaNum;
-	std::cout << "\nendAreaNum " << temp.endAreaNum;
-	std::cout << "\npadding " << temp.padding;
-	*/
+	const char* aasFileName = tempFile;
 
-	std::cout << "\nOutput file path: ";
-	//const char* outputPath = getFilePath();
-	const char* outputPath = "test.txt";
+	load_aas(&myFile, aasFileName);
+
+	std::cout << "\nAAS file loaded";
+
+	// Use input AAS file name to create output file name
+	auto outputPath = getOutputPath(aasFileName); // bfg_division.baas_monster128;aas
+
+	// Write AAS to output file
 	write_aas(&myFile, outputPath);
-
-	//std::cin.get();
+	std::cout << "\nPress Enter or close this window . . .";
+	std::cin.get();
 
 	return 0;
 }
