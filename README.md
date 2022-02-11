@@ -5,7 +5,7 @@ A program that reads a binary AAS file (`.baas`) and loads it into a struct. Cur
 Majority of the code was written by chrispy, and I take no credit for any of it.
 
 ## Usage
-Run program and enter path to `.baas` file. Alternatively, drag and drop the `.baas` on to the executable. A `.aas` file will written to the `Output` folder.
+Run program and enter path to `.baas` file. Alternatively, drag and drop the `.baas` on to the executable. A `.aas` file will written to the `Plain Text AAS` folder.
 
 ## Potential Issues
 Two `.aas` files exist for Doom 2016, so those plus the Doom 3 BFG writer were used as reference for this program's text AAS writer. But due to the limited sample size, and that the D3BFG writer is not the latest implementation, a few of the fields might have their values written out in the wrong order.
